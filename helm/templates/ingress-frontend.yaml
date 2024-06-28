@@ -8,8 +8,15 @@ metadata:
     app: moveapps-ingress
   namespace: "{{ .Values.namespace }}"
 spec:
+  tls:
+    - hosts:
+      {{- range .Values.hosts }}
+      - {{ . }}
+      {{- end }}
+      secretName: moveapps-ingress-tls
   rules:
-  - host: "{{ .Values.host }}"
+  {{- range .Values.hosts }}
+  - host: {{ . }}
     http:
       paths:
         - path: /
@@ -19,3 +26,4 @@ spec:
               name: moveapps-service
               port:
                 number: 8080
+  {{- end }}
