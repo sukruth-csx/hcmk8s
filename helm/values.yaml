@@ -9,7 +9,7 @@ mariadb:
   DATABASE_SERVICE_NAME: maria-db-service
   MYSQL_MOOVAPPS_DATABASE_NAME: moovapps
 
-host: hcmk8s.mshome.net
+host: hcm.sukruthgrandhi.com
 
 maildev:
   replicas: 1
