@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moovapps
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/depends-on": mariadb-init-job
+spec:
+  replicas: {{ .Values.moovapps.replicas }}
+  selector:
+    matchLabels:
+      app: moovapps
+  template:
+    metadata:
+      labels:
+        app: moovapps
+    spec:
+      containers:
+        - name: moovapps
+          image:  {{ .Values.moovapps.repository }}:{{ .Values.moovapps.tag }}
+          ports:
+            - containerPort: {{ .Values.moovapps.WILDFLY_HTTP_PORT }}
+            - containerPort: {{ .Values.moovapps.WILDFLY_MANAGEMENT_PORT }}
+            - containerPort: {{ .Values.moovapps.JVM_DEBUG_PORT }}
+          env:
+            {{- range .Values.moovapps.envVariables }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          volumeMounts:
+          - name: volume-process-data
+            mountPath: /process-data"
+          - name: volume-apps
+            mountPath: /opt/vdocplatform/ori/apps
+          - name: volume-custom
+            mountPath: /opt/vdocplatform/ori/custom
+      volumes:
+      - name: volume-process-data
+        hostPath:
+          path: /usr/share/volumes/process-data
+      - name: volume-apps
+        hostPath:
+          path: /usr/share/volumes/apps
+      - name: volume-custom
+        hostPath:
+          path: /usr/share/volumes/custom

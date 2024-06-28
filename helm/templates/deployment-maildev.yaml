@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maildev
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.maildev.replicas }}
+  selector:
+    matchLabels:
+      app: maildev
+  template:
+    metadata:
+      labels:
+        app: maildev
+    spec:
+      containers:
+        - name: maildev
+          image:  {{ .Values.maildev.repository }}:{{ .Values.maildev.tag }}
+          ports:
+            - containerPort: {{ .Values.maildev.MAILDEV_WEBAPP_PORT }}
+            - containerPort: {{ .Values.maildev.MAILDEV_SMTP_PORT }}
+          env:
+            - name: MAILDEV_WEBAPP_PORT
+              value: "{{ .Values.maildev.MAILDEV_WEBAPP_PORT }}"
+            - name: MAILDEV_SMTP_PORT
+              value: "{{ .Values.maildev.MAILDEV_SMTP_PORT }}"

@@ -1,0 +1,107 @@
+namespace: hcm-client1
+mariadb:
+  replicas: 1
+  repository: mariadb
+  tag: 10.4
+  MYSQL_MOOVAPPS_DATABASE_PASSWORD: manager
+  MYSQL_MOOVAPPS_HISTORY_DATABASE_NAME: history
+  MYSQL_MOOVAPPS_REPORT_DATABASE_NAME: report
+  DATABASE_SERVICE_NAME: maria-db-service
+  MYSQL_MOOVAPPS_DATABASE_NAME: moovapps
+
+host: hcmk8s.mshome.net
+
+maildev:
+  replicas: 1
+  repository: maildev/maildev
+  tag: latest
+  MAILDEV_WEBAPP_PORT: 1080
+  MAILDEV_SMTP_PORT: 1025
+
+moovapps:
+  repository: dregistry.moovapps.com/moovapps/process
+  tag: 18.1.0
+  replicas: 1
+  WILDFLY_HTTP_PORT: 8080
+  WILDFLY_MANAGEMENT_PORT: 9990
+  JVM_DEBUG_PORT: 8000
+  envVariables:
+    - name: GRINDER_ENABLED
+      value: 0
+    - name: GRINDER_TENANT_NAME
+      value: local
+    - name: GRINDER_TENANT_ENV
+      value: prod
+    - name: GRINDER_TENANT_TYPE
+      value: process
+
+    - name: VDOC_MODULE_BIRT
+      value: 0
+    - name: VDOC_MODULE_CRYSTAL
+      value: 0
+    - name: VDOC_MODULE_EDITORIALS
+      value: 0
+    - name: VDOC_MODULE_FORUMS
+      value: 0
+    - name: VDOC_MODULE_LINKS
+      value: 0
+    - name: VDOC_MODULE_NEWS
+      value: 0
+    - name: VDOC_MODULE_POLLS
+      value: 0
+
+    - name: VDOC_MODULE_REPORTIMPORT
+      value: 0
+    - name: VDOC_MODULE_REPORTPUBLISHING
+      value: 0
+    - name: VDOC_MODULE_PROCESSRUNTIME
+      value: 1
+    - name: VDOC_MODULE_PROCESSDESIGNER
+      value: 1
+    - name: VDOC_WEBAPP_LOG_ACCESS
+      value: 0
+    - name: VDOC_WEBAPP_LOG_SECURITY
+      value: 0
+    - name: VDOC_WEBAPP_LOG_SIMPLE
+      value: 1
+
+    - name: JAVA_REMOTEDEBUG
+      value: 1
+    - name: JAVA_MEM_LIMIT
+      value: 2G
+
+    - name: DATABASE_TYPE
+      value: mysql
+
+    - name: VDOC_WEBAPP_NAME
+      value: visiativ
+
+# Below are important
+    - name: VDOC_DB_SERVER
+      value: maria-db-service
+
+    - name: VDOC_DB_PORT
+      value: 3306
+
+    - name: VDOC_DB_USERNAME
+      value: root
+    - name: VDOC_DB_USERPASSWORD
+      value: manager
+
+    - name: VDOC_DB_MAIN
+      value: moovapps
+
+    - name: VDOC_DB_HISTORY_ENABLED
+      value: 'false'
+
+    - name: VDOC_DB_HISTORY
+      value: history
+
+    - name: VDOC_DB_REPORT
+      value: report
+
+    - name: VDOC_DEFAULT_LOCALE
+      value: fr_FR
+
+    - name: VDOC_DEFAULT_LANGUAGE
+      value: fr

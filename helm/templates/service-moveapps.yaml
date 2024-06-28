@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: moveapps-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: moovapps
+  ports:
+    - protocol: 
+      port: {{ .Values.moovapps.WILDFLY_HTTP_PORT }}
+      targetPort: {{ .Values.moovapps.WILDFLY_HTTP_PORT }}
+      name: wildly-http-port
+    - protocol: TCP
+      port: {{ .Values.moovapps.WILDFLY_MANAGEMENT_PORT }}
+      targetPort: {{ .Values.moovapps.WILDFLY_MANAGEMENT_PORT }}
+      name: wildly-mangement-port
+    - protocol: TCP
+      port: {{ .Values.moovapps.JVM_DEBUG_PORT }}
+      targetPort: {{ .Values.moovapps.JVM_DEBUG_PORT }}
+      name: jvm-debug-port
+  type: ClusterIP

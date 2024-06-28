@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mariadb-init-job
+  labels:
+    app: mariadb-init
+  annotations:
+    "helm.sh/depends-on": mariadb-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: mariadb-init
+          image: {{ .Values.mariadb.repository }}:{{ .Values.mariadb.tag }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.mariadb.MYSQL_MOOVAPPS_DATABASE_PASSWORD }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              until mysqladmin ping -h {{ .Values.mariadb.DATABASE_SERVICE_NAME }} -P 3306 --silent; do
+                echo 'waiting for {{ .Values.mariadb.DATABASE_SERVICE_NAME }}';
+                sleep 5;
+              done;
+              mysql -h {{ .Values.mariadb.DATABASE_SERVICE_NAME }} -P 3306 -u root -p${MYSQL_ROOT_PASSWORD} < /etc/mysql/init/init-history.sql;
+              mysql -h {{ .Values.mariadb.DATABASE_SERVICE_NAME }} -P 3306 -u root -p${MYSQL_ROOT_PASSWORD} < /etc/mysql/init/init-report.sql;
+              echo 'Completed creating databases for {{ .Values.mariadb.DATABASE_SERVICE_NAME }}';
+
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /etc/mysql/init
+      restartPolicy: OnFailure
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: mariadb-init-scripts
