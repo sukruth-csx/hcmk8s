@@ -4,6 +4,7 @@ metadata:
   name: moveapps-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: lets-encrypt
   labels:
     app: moveapps-ingress
   namespace: "{{ .Values.namespace }}"
